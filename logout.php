@@ -1,7 +1,10 @@
 <?php
-session_start();
+require_once __DIR__ . '/config/session.php';
+
+// Destroy the session
 session_unset();
 session_destroy();
-header("Location: index.php");
+
+// Redirect to login
+header("Location: " . base_url("/login.php"));
 exit();
-?>

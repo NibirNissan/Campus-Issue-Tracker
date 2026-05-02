@@ -1,10 +1,10 @@
+</main>
+<footer class="bg-dark text-white text-center py-3 mt-auto">
+    <div class="container">
+        <p class="mb-0">&copy; <?php echo date('Y'); ?> Campus Issue Tracker. All rights reserved.</p>
     </div>
-    <footer class="mt-auto py-4 bg-white border-top">
-        <div class="container text-center">
-            <span class="text-muted small">&copy; <?php echo date('Y'); ?> Campus Issue Tracker. All rights reserved.</span>
-        </div>
-    </footer>
-    <!-- Bootstrap 5.3 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</footer>
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

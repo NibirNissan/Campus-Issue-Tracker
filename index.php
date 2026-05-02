@@ -1,72 +1,116 @@
 <?php
-session_start();
-require_once 'includes/db.php';
+require_once __DIR__ . '/config/session.php';
 
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    if (!empty($email) && !empty($password)) {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch();
-
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_role'] = $user['role'];
-
-            if ($user['role'] == 'admin') {
-                header("Location: admin_dashboard.php");
-            } else {
-                header("Location: dashboard.php");
-            }
-            exit();
-        } else {
-            $error = "Invalid email or password.";
-        }
+// Redirect logged-in users to their dashboard
+if (isLoggedIn()) {
+    if (isAdmin()) {
+        header("Location: " . base_url("/pages/admin/dashboard.php"));
     } else {
-        $error = "Please fill in all fields.";
+        header("Location: " . base_url("/pages/student/dashboard.php"));
     }
+    exit();
 }
 
-include 'includes/header.php';
+$pageTitle = 'Home';
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Issue Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="<?php echo base_url("/css/style.css"); ?>" rel="stylesheet">
+</head>
+<body>
+<?php include __DIR__ . '/includes/navbar.php'; ?>
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card p-4">
-            <h3 class="text-center mb-4">Login</h3>
-            
-            <?php if($error): ?>
-                <div class="alert alert-danger"><?php echo $error; ?></div>
-            <?php endif; ?>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1><i class="bi bi-megaphone-fill me-3"></i>Campus Issue Tracker</h1>
+        <p class="lead mt-3">Report campus issues easily. Track their resolution in real time.</p>
+        <div class="mt-4">
+            <a href="<?php echo base_url("/register.php"); ?>" class="btn btn-light btn-lg me-2">
+                <i class="bi bi-person-plus me-1"></i>Register
+            </a>
+            <a href="<?php echo base_url("/login.php"); ?>" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Login
+            </a>
+        </div>
+    </div>
+</section>
 
-            <form method="POST" action="">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" name="email" class="form-control" id="email" required>
+<!-- Features Section -->
+<main class="container py-5">
+    <h2 class="text-center mb-5">How It Works</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="feature-icon"><i class="bi bi-pencil-square"></i></div>
+                    <h5 class="card-title">Submit Complaint</h5>
+                    <p class="card-text text-muted">Students can easily submit complaints about lab, classroom, hostel, library, or other campus issues.</p>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" id="password" required>
-                </div>
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </div>
-            </form>
-            <div class="text-center mt-3">
-                <p class="small">Don't have an account? <a href="register.php">Register here</a></p>
             </div>
-            
-            <div class="mt-4 pt-3 border-top text-center text-muted small">
-                <p>Admin Login: admin@campus.edu / admin123</p>
-                <p>Student Login: Register a new account below</p>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="feature-icon"><i class="bi bi-arrow-repeat"></i></div>
+                    <h5 class="card-title">Track Status</h5>
+                    <p class="card-text text-muted">Monitor the progress of your complaints in real time: Pending, In Progress, or Done.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                    <h5 class="card-title">View Timeline</h5>
+                    <p class="card-text text-muted">See the complete timeline of each complaint for full transparency.</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<?php include 'includes/footer.php'; ?>
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="feature-icon"><i class="bi bi-image"></i></div>
+                    <h5 class="card-title">Attach Images</h5>
+                    <p class="card-text text-muted">Upload photos to provide visual evidence with your complaints.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="feature-icon"><i class="bi bi-shield-lock"></i></div>
+                    <h5 class="card-title">Secure Access</h5>
+                    <p class="card-text text-muted">Separate student and admin panels ensure secure role-based access control.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="feature-icon"><i class="bi bi-speedometer2"></i></div>
+                    <h5 class="card-title">Admin Dashboard</h5>
+                    <p class="card-text text-muted">Admins get a comprehensive dashboard to manage and resolve all complaints efficiently.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="bg-dark text-white text-center py-3 mt-auto">
+    <div class="container">
+        <p class="mb-0">&copy; <?php echo date('Y'); ?> Campus Issue Tracker. All rights reserved.</p>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
