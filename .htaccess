@@ -1,0 +1,20 @@
+# Campus Issue Tracker - Apache Configuration
+# Enable URL rewriting
+
+RewriteEngine On
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect config directory
+RewriteRule ^config/ - [F,L]
+
+# Protect includes directory
+RewriteRule ^includes/ - [F,L]
+
+# Set default character set
+AddDefaultCharset UTF-8
+
+# PHP settings (for XAMPP)
+php_value upload_max_filesize 5M
+php_value post_max_size 8M
